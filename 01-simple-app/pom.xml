@@ -11,7 +11,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>01-simple</artifactId>
+  <artifactId>01-simple-app</artifactId>
   <packaging>war</packaging>
 
 </project>

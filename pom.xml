@@ -10,7 +10,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>01-simple</module>
+    <module>01-simple-app</module>
   </modules>
 
   <properties>
