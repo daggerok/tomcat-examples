@@ -49,6 +49,8 @@ build/
 *.sln
 *.sw?
 
-###
+### User ###
 
 apache-tomcat-8.5.57*
+nohup.out
+wget-log
