@@ -2,7 +2,7 @@
 
 ##############################
 #                            #
-#  bash bin/start-apache.sh  #
+#  bash bin/apache-start.sh  #
 #                            #
 ##############################
 

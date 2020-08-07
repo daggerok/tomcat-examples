@@ -1,0 +1,65 @@
+otifications:
+  email: false
+git:
+  quiet: true
+  depth: false
+jdk: openjdk8
+node_js: lts/*
+language: python
+python: 3.8
+os: linux
+arch: amd64
+addons:
+  apt:
+    packages:
+    - curl
+    - sudo
+    - lsof
+    - wget
+    - unzip
+    - httpie
+    - docker-ce
+    - docker-compose
+env:
+  global:
+  - TERM=dumb
+service:
+- docker
+install: true
+before_install:
+- |
+  if [ ! -f ${HOME}/.local/daggerok/bash-functions/master/main.bash ] ; then
+    mkdir -p ${HOME}/.local/daggerok/bash-functions/master ;
+    curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash > ${HOME}/.local/daggerok/bash-functions/master/main.bash ;
+  fi
+  source ${HOME}/.local/daggerok/bash-functions/master/main.bash ;
+- stop_any 80 8080 5432 3306
+jobs:
+  include:
+  - stage: test
+    name: 01-simple-app
+    before_script:
+    - bash    ./bin/apache-recreate.sh
+    - bash    ./bin/apache-restart.sh
+    - source  ./bin/.apache-env.sh
+    - cd $TRAVIS_BUILD_DIR && ./mvnw clean
+    - cd $TRAVIS_BUILD_DIR && ./mvnw -f 01-simple-app
+    - cd $TRAVIS_BUILD_DIR && cp -Rf ./01-simple-app/target/*.war ./apache-tomcat-$TOMCAT_8_VERSION/webapps/ROOT.war
+    script:
+    - curl -v 0:8080/
+    after_script:
+    - bash    ./bin/apache-stop.sh
+  - stage: test
+    name: 01-simple-app
+    before_script:
+    - cd $TRAVIS_BUILD_DIR && ./mvnw clean
+    - cd $TRAVIS_BUILD_DIR && ./mvnw -f 01-simple-app
+    - docker rmi -f daggerok/02-simple-app-in-docker daggerok/apache-tomcat daggerok/apache-tomcat:8.5.57 daggerok/apache-tomcat:8
+    - cd $TRAVIS_BUILD_DIR && docker build -f ./02-simple-app-in-docker/Dockerfile -t daggerok/02-simple-app-in-docker ./01-simple-app
+    #- cd $TRAVIS_BUILD_DIR && docker run --name 02-simple-app-in-docker --rm -it -p 8080:8080 daggerok/02-simple-app-in-docker
+    - docker run --name 02-simple-app-in-docker --rm -p 8080:8080 daggerok/02-simple-app-in-docker &
+    - wait_healthy_docker_containers 1
+    script:
+    - curl -v 0:8080/
+    after_script:
+    - docker rm -f -v 02-simple-app-in-docker

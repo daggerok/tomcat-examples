@@ -9,8 +9,8 @@ apache tomcat examples...
 ## simple app
 
 ```bash
-bash bin/recreate-apache.sh
-bash bin/restart-apache.sh
+bash bin/apache-recreate.sh
+bash bin/apache-restart.sh
 
 ./mvnw
 source ./bin/.apache-env.sh
@@ -22,8 +22,10 @@ curl 0:8080/
 ## simple app in docker
 
 ```bash
+./mvnw clean ; ./mvnw
+docker rmi -f daggerok/02-simple-app-in-docker daggerok/apache-tomcat daggerok/apache-tomcat:8.5.57 daggerok/apache-tomcat:8
 docker build -f ./02-simple-app-in-docker/Dockerfile -t daggerok/02-simple-app-in-docker ./01-simple-app
 docker run --name 02-simple-app-in-docker --rm -it -p 8080:8080 daggerok/02-simple-app-in-docker
-curl 0:8080/
+curl -v 0:8080/
 docker stop 02-simple-app-in-docker
 ```

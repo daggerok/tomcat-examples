@@ -2,7 +2,7 @@
 
 #############################
 #                           #
-#  bash bin/stop-apache.sh  #
+#  bash bin/apache-stop.sh  #
 #                           #
 #############################
 
