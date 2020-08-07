@@ -51,6 +51,6 @@ build/
 
 ### User ###
 
-apache-tomcat-8.5.57*
+apache-tomcat-*
 nohup.out
 wget-log

@@ -3,9 +3,9 @@ otifications:
 git:
   quiet: true
   depth: false
+language: java
 jdk: openjdk8
 node_js: lts/*
-language: python
 python: 3.8
 os: linux
 arch: amd64
@@ -23,6 +23,8 @@ addons:
 env:
   global:
   - TERM=dumb
+  - TOMCAT_VERSION=8.5.57
+  - TOMCAT_MAJOR_VERSION=8
 service:
 - docker
 install: true
@@ -41,10 +43,14 @@ jobs:
     before_script:
     - bash    ./bin/apache-recreate.sh
     - bash    ./bin/apache-restart.sh
+    - ls -lah ./apache-tomcat-${TOMCAT_VERSION}/webapps/
     - source  ./bin/.apache-env.sh
-    - cd $TRAVIS_BUILD_DIR && ./mvnw clean
+    - cd $TRAVIS_BUILD_DIR && ./mvnw -q clean
     - cd $TRAVIS_BUILD_DIR && ./mvnw -f 01-simple-app
-    - cd $TRAVIS_BUILD_DIR && cp -Rf ./01-simple-app/target/*.war ./apache-tomcat-$TOMCAT_8_VERSION/webapps/ROOT.war
+    - cd $TRAVIS_BUILD_DIR && cp -Rf ./01-simple-app/target/*.war ./apache-tomcat-${TOMCAT_VERSION}/webapps/ROOT.war
+    - while [[ 200 -ne `curl -o /dev/null --silent --head --write-out "%{http_code} $LINE\n" 0:8080/` ]] ; do
+        sleep 1s ; echo -ne '.' ;
+      done
     script:
     - curl -v 0:8080/
     after_script:
@@ -52,12 +58,12 @@ jobs:
   - stage: test
     name: 01-simple-app
     before_script:
-    - cd $TRAVIS_BUILD_DIR && ./mvnw clean
-    - cd $TRAVIS_BUILD_DIR && ./mvnw -f 01-simple-app
-    - docker rmi -f daggerok/02-simple-app-in-docker daggerok/apache-tomcat daggerok/apache-tomcat:8.5.57 daggerok/apache-tomcat:8
+    - cd $TRAVIS_BUILD_DIR && ./mvnw -q clean
+    - cd $TRAVIS_BUILD_DIR && ./mvnw -q -f 01-simple-app
+    - docker rmi -f daggerok/02-simple-app-in-docker daggerok/apache-tomcat daggerok/apache-tomcat:${TOMCAT_VERSION} daggerok/apache-tomcat:${TOMCAT_MAJOR_VERSION}
     - cd $TRAVIS_BUILD_DIR && docker build -f ./02-simple-app-in-docker/Dockerfile -t daggerok/02-simple-app-in-docker ./01-simple-app
     #- cd $TRAVIS_BUILD_DIR && docker run --name 02-simple-app-in-docker --rm -it -p 8080:8080 daggerok/02-simple-app-in-docker
-    - docker run --name 02-simple-app-in-docker --rm -p 8080:8080 daggerok/02-simple-app-in-docker &
+    - docker run --name 02-simple-app-in-docker --rm -d -p 8080:8080 daggerok/02-simple-app-in-docker
     - wait_healthy_docker_containers 1
     script:
     - curl -v 0:8080/

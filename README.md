@@ -14,7 +14,7 @@ bash bin/apache-restart.sh
 
 ./mvnw
 source ./bin/.apache-env.sh
-cp -Rf ./01-simple-app/target/*.war apache-tomcat-$TOMCAT_8_VERSION/webapps/ROOT.war
+cp -Rf ./01-simple-app/target/*.war apache-tomcat-$TOMCAT_VERSION/webapps/ROOT.war
 
 curl 0:8080/
 ```
@@ -23,7 +23,7 @@ curl 0:8080/
 
 ```bash
 ./mvnw clean ; ./mvnw
-docker rmi -f daggerok/02-simple-app-in-docker daggerok/apache-tomcat daggerok/apache-tomcat:8.5.57 daggerok/apache-tomcat:8
+docker rmi -f daggerok/02-simple-app-in-docker daggerok/apache-tomcat daggerok/apache-tomcat:9.0.37 daggerok/apache-tomcat:8
 docker build -f ./02-simple-app-in-docker/Dockerfile -t daggerok/02-simple-app-in-docker ./01-simple-app
 docker run --name 02-simple-app-in-docker --rm -it -p 8080:8080 daggerok/02-simple-app-in-docker
 curl -v 0:8080/

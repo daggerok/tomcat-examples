@@ -10,8 +10,13 @@ export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && p
 source ${SCRIPT_DIR}/.apache-env.sh
 
 bash ${SCRIPT_DIR}/apache-stop.sh
-[[ -d "./apache-tomcat-${TOMCAT_8_VERSION}" ]] && rm -rf ./apache-tomcat-${TOMCAT_8_VERSION}
+if [[ -d "./apache-tomcat-${TOMCAT_VERSION}" ]] ; then
+  rm -rf ./apache-tomcat-${TOMCAT_VERSION}
+fi
 
-[[ ! -f "./apache-tomcat-${TOMCAT_8_VERSION}.zip" ]] && wget ${TOMCAT_8_BASE_URL}v${TOMCAT_8_VERSION}/bin/apache-tomcat-${TOMCAT_8_VERSION}.zip
-unzip ./apache-tomcat-${TOMCAT_8_VERSION}.zip
-rm -rf ./apache-tomcat-${TOMCAT_8_VERSION}/webapps/{ROOT*,docs,examples,host-manager,manager}
+if [[ ! -f "./apache-tomcat-${TOMCAT_VERSION}.zip" ]] ; then
+  wget ${TOMCAT_BASE_URL}v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.zip
+fi
+
+unzip ./apache-tomcat-${TOMCAT_VERSION}.zip
+rm -rf ./apache-tomcat-${TOMCAT_VERSION}/webapps/{ROOT*,docs,examples,host-manager,manager}
