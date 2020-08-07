@@ -1,4 +1,4 @@
-# [tomcat-examples](https://github.com/daggerok/tomcat-examples)
+# tomcat-examples [![Build Status](https://travis-ci.org/daggerok/tomcat-examples.svg?branch=master)](https://travis-ci.org/daggerok/tomcat-examples)
 apache tomcat examples...
 
 ## Table of Content
