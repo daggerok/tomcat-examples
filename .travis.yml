@@ -23,10 +23,8 @@ addons:
 env:
   global:
   - TERM=dumb
-  - TOMCAT_VERSION=9.0.37
-  - TOMCAT_MAJOR_VERSION=9
-  #- TOMCAT_VERSION=10.0.0-M7
-  #- TOMCAT_MAJOR_VERSION=10
+  - TOMCAT_VERSION=8.5.57
+  - TOMCAT_MAJOR_VERSION=8
 service:
 - docker
 install: true
