@@ -3,7 +3,7 @@
 # curl 0:8080/
 # docker stop 02-simple-app-in-docker
 
-FROM daggerok/apache-tomcat:8
+FROM daggerok/apache-tomcat:9
 LABEL MAINTAINER='Maksim Kostromin <daggerok@gmail.com>'
 HEALTHCHECK --start-period=1s                                 \
             --interval=1s                                     \

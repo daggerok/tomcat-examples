@@ -15,7 +15,7 @@ if [[ -d "./apache-tomcat-${TOMCAT_VERSION}" ]] ; then
 fi
 
 if [[ ! -f "./apache-tomcat-${TOMCAT_VERSION}.zip" ]] ; then
-  wget ${TOMCAT_BASE_URL}v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.zip
+  wget ${TOMCAT_URL}
 fi
 
 unzip ./apache-tomcat-${TOMCAT_VERSION}.zip
