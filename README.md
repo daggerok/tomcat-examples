@@ -30,3 +30,17 @@ docker run --name 02-simple-app-in-docker --rm -it -p 8080:8080 daggerok/02-simp
 curl -v 0:8080/
 docker stop 02-simple-app-in-docker
 ```
+
+## tomcat6 maven plugin
+
+```bash
+./mvnw -f 03-tomcat6-maven-plugin clean package tomcat6:run-war
+curl 0:8080/
+```
+
+## tomcat7 maven plugin
+
+```bash
+./mvnw -f 03-tomcat7-maven-plugin clean package tomcat7:run-war
+curl 0:8080/
+```
