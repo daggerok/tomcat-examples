@@ -19,6 +19,7 @@ build/
 /out/
 **/out/**
 nohup.out
+.DS_Store
 
 ### Node JS ###
 node_modules/
