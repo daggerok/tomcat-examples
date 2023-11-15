@@ -11,7 +11,7 @@ env:
   JAVA_8_VERSION: '8'
   NODE_VERSION: '19.7.0'
 jobs:
-  tests:
+  simple-app:
     if: github.event.inputs.trigger == ''
       || !startsWith(github.event.inputs.trigger, 'm')
       || !startsWith(github.event.inputs.trigger, 'M')
@@ -27,21 +27,65 @@ jobs:
             ./build
             ./.docker
             ~/.m2/repository
-            !~/.m2/repository/daggerok
             !~/.m2/repository/io/github/daggerok
-            !~/.m2/repository/com/github/daggerok
           key: ${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-      - run: sudo rm -rf ~/.m2/repository/daggerok ~/.m2/repository/io/github/daggerok ~/.m2/repository/com/github/daggerok
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ env.JAVA_8_VERSION }}
+      #- run: sudo apt install -yq curl
+      - run: test `command -v curl` || ( echo "curl command not found" ; false )
+      - run: |
+          nohup ./mvnw -f 01-simple-app package tomcat7:run-war &
+          sleep 1s
+          retries=15
+          while [[ 0 -lt $retries ]] && [[ 200 -ne `curl -o /dev/null --silent --head --write-out "%{http_code} $LINE\n" 0:8080/app/` ]] ; do
+            sleep 1s
+            echo -ne '.'
+            ((retries--))
+          done
+          curl -v 0:8080/app/
+  simple-app-in-docker:
+    if: github.event.inputs.trigger == ''
+      || !startsWith(github.event.inputs.trigger, 'm')
+      || !startsWith(github.event.inputs.trigger, 'M')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: java-cache
+        with:
+          path: |
+            ./.n
+            ./.m2
+            ./build
+            ./.docker
+            ~/.m2/repository
+            !~/.m2/repository/io/github/daggerok
+          key: ${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_8_VERSION }}
+      - run: ./mvnw -f 01-simple-app
+      - run: test `command -v docker` || ( echo "docker command not found" ; false )
+      - run: docker rm -f -v app
+      - run: docker rmi -f daggerok/tomcat-examples-02-simple-app-in-docker
+      - run: docker build -f ./02-simple-app-in-docker/Dockerfile -t daggerok/tomcat-examples-02-simple-app-in-docker ./01-simple-app
+      - run: docker run --rm -d -p 8080:8080 --name app daggerok/tomcat-examples-02-simple-app-in-docker
+      - run: |
+          nohup docker logs -f app &
+          count=15
+          retries=15
+          while [[ 0 -lt $retries ]] && [[ $(docker ps -n $count -q -f health=healthy -f status=running | wc -l) -lt $count ]] ; do
+            sleep 1s
+            echo -ne '.'
+            ((retries--))
+          done
       #- uses: actions/setup-node@v3
       #  with:
       #    node-version: ${{ env.NODE_VERSION }}
-      #- run: test `command -v docker1` || ( echo "docker command not found" ; false )
-      #- run: for i in `docker ps -aq` ; do docker rm -f -v $i ; done
-      #- run: docker compose -f $GITHUB_WORKSPACE/docker-compose.yml up -d
-      #- run: for i in 8081 27017 5672 8082 25672 ; do npm_config_yes=true npx wait-port $i ; done
-      - run: cd $GITHUB_WORKSPACE ; ./mvnw
-      - run: ls -lah $GITHUB_WORKSPACE/01-simple-app/target/
+      #- run: for port in 8080 ; do npm_config_yes=true npx wait-port $port ; done
+      #- run: sudo apt install -yq curl
+      - run: test `command -v curl` || ( echo "curl command not found" ; false )
+      - run: curl -v 0:8080/
