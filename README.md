@@ -1,5 +1,5 @@
-# tomcat-examples [![Build Status](https://travis-ci.org/daggerok/tomcat-examples.svg?branch=master)](https://travis-ci.org/daggerok/tomcat-examples)
-apache tomcat examples...
+# tomcat-examples [![CI](https://github.com/daggerok/tomcat-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/daggerok/tomcat-examples/actions/workflows/ci.yml)
+Apache Tomcat examples
 
 ## Table of Content
 
