@@ -5,6 +5,7 @@ Apache Tomcat examples
 
 * [simple app](#simple-app)
 * [simple app in docker](#simple-app-in-docker)
+* [Create a JSON and XML REST service with Java EE](https://www.youtube.com/watch?v=1kuMP2bUwpw)
 
 ## simple app
 
