@@ -18,6 +18,7 @@ target/
 build/
 /out/
 **/out/**
+nohup.out
 
 ### Node JS ###
 node_modules/
