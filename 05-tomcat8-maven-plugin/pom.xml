@@ -12,16 +12,12 @@
   <artifactId>05-tomcat8-maven-plugin</artifactId>
   <packaging>war</packaging>
   <build>
-    <finalName>app</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.tomcat.maven</groupId>
           <artifactId>tomcat8-maven-plugin</artifactId>
           <version>3.0-r1756463</version>
-          <configuration>
-            <path>/${project.build.finalName}</path>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
