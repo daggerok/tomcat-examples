@@ -12,6 +12,7 @@
     <module>03-tomcat6-maven-plugin</module>
     <module>04-tomcat7-maven-plugin</module>
     <module>05-tomcat8-maven-plugin</module>
+    <module>06-tomee-maven-plugin</module>
   </modules>
   <properties>
     <encoding>UTF-8</encoding>

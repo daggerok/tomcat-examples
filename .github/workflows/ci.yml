@@ -9,8 +9,43 @@ on:
         default: ''
 env:
   JAVA_8_VERSION: '8'
+  JAVA_11_VERSION: '11'
   NODE_VERSION: '19.7.0'
 jobs:
+  tomee-maven-plugin:
+    if: github.event.inputs.trigger == ''
+      || !startsWith(github.event.inputs.trigger, 'm')
+      || !startsWith(github.event.inputs.trigger, 'M')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: java-cache
+        with:
+          path: |
+            ./.n
+            ./.m2
+            ./build
+            ./.docker
+            ~/.m2/repository
+            !~/.m2/repository/io/github/daggerok
+          key: ${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_11_VERSION }}
+      #- run: sudo apt install -yq curl
+      - run: test `command -v curl` || ( echo "curl command not found" ; false )
+      - run: |
+          nohup ./mvnw -f 06-tomee-maven-plugin clean package tomee:run &
+          sleep 1s
+          retries=15
+          while [[ 0 -lt $retries ]] && [[ 200 -ne `curl -o /dev/null --silent --head --write-out "%{http_code} $LINE\n" 0:8080/app/` ]] ; do
+            sleep 1s
+            echo -ne '.'
+            ((retries--))
+          done
+          curl -v 0:8080/app/
   tomcat8-maven-plugin:
     if: github.event.inputs.trigger == ''
       || !startsWith(github.event.inputs.trigger, 'm')
